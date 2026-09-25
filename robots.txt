@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /jpg/
+Disallow: /_araclar/
+
+Sitemap: https://yapbozmobilya.com.tr/sitemap.xml
