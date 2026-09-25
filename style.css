@@ -730,6 +730,15 @@ html:not(.js) .katalog-olcek{margin-top:44px}
 .m-govde .tablo-kaydir{max-width:none}
 .tablo{width:100%;min-width:480px;border-collapse:collapse;font-size:.93rem}
 .tablo.dar{min-width:0}
+@media(max-width:599px){
+  .tablo.yigin{min-width:0}
+  .tablo.yigin thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tablo.yigin tbody,.tablo.yigin tr,.tablo.yigin th,.tablo.yigin td{display:block}
+  .tablo.yigin tr{padding:10px 0;border-bottom:1px solid var(--cizgi)}
+  .tablo.yigin th,.tablo.yigin td{padding:2px 0;border:0}
+  .tablo.yigin tbody th{padding-bottom:4px}
+  .tablo.yigin td[data-etiket]::before{content:attr(data-etiket) ": ";font-weight:700;color:var(--murekkep)}
+}
 .tablo th,.tablo td{text-align:left;vertical-align:top;padding:9px 12px 9px 0;border-bottom:1px solid var(--cizgi)}
 .tablo thead th{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--murekkep-3);
   border-bottom:1.5px solid var(--murekkep);font-variation-settings:var(--dar)}
@@ -750,6 +759,18 @@ html:not(.js) .katalog-olcek{margin-top:44px}
 .r-foto{background:var(--tile)}
 .r-foto img{width:100%;max-height:560px;object-fit:contain}
 .r-foto figcaption{background:var(--kagit)}
+.cz-buyut{float:right;margin:0 0 4px 10px;padding:6px 12px;font:inherit;font-size:.8rem;font-weight:750;line-height:1.2;
+  color:var(--murekkep);background:var(--kagit);border:1.5px solid var(--murekkep);border-radius:999px;cursor:pointer}
+.cz-buyut[hidden]{display:none}
+.cz-kaplama{position:fixed;inset:0;z-index:210;display:flex;flex-direction:column;background:var(--kagit)}
+.cz-kaplama[hidden]{display:none}
+.cz-kaplama-ust{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;
+  border-bottom:1.5px solid var(--murekkep);font-size:.85rem;color:var(--murekkep-2)}
+.cz-kapat{padding:8px 16px;font:inherit;font-weight:750;color:var(--murekkep);background:var(--fis);border:1.5px solid var(--murekkep);
+  border-radius:999px;cursor:pointer}
+.cz-kaplama-ic{flex:1;overflow:auto;padding:16px;-webkit-overflow-scrolling:touch}
+.cz-kaplama-ic .cz-ikili{display:block}
+.cz-kaplama-ic svg{display:block;margin:0 0 18px}
 .cz-ikili{display:grid;gap:14px}
 @media(min-width:620px){.cz-ikili{grid-template-columns:1fr 1fr}}
 

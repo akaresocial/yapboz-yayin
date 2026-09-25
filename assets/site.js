@@ -214,6 +214,47 @@
     });
   });
 
+  /* rehber çizimleri: telefonda yazısı küçük kalan çizime "Büyüt" düğmesi; çizim tam ekranda okunur boyutta açılır */
+  var czKap = null, czSon = null;
+  var czKapat = function () {
+    czKap.hidden = true; czKap.querySelector('.cz-kaplama-ic').innerHTML = ''; d.body.style.overflow = '';
+    if (czSon) czSon.focus();
+  };
+  var czAc = function (f, oran, b) {
+    if (!czKap) {
+      czKap = d.createElement('div');
+      czKap.className = 'cz-kaplama'; czKap.hidden = true;
+      czKap.setAttribute('role', 'dialog'); czKap.setAttribute('aria-modal', 'true'); czKap.setAttribute('aria-label', 'Çizim, büyütülmüş');
+      czKap.innerHTML = '<div class="cz-kaplama-ust"><span>Parmağınızla kaydırın</span><button type="button" class="cz-kapat">Kapat</button></div>' +
+        '<div class="cz-kaplama-ic"></div>';
+      d.body.appendChild(czKap);
+      czKap.querySelector('.cz-kapat').addEventListener('click', czKapat);
+      d.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !czKap.hidden) czKapat(); });
+    }
+    var ic = czKap.querySelector('.cz-kaplama-ic'), renk = f.className.match(/renk-\S+/);
+    ic.className = 'cz-kaplama-ic' + (renk ? ' ' + renk[0] : '');
+    ic.innerHTML = f.querySelector('.r-cizim-ic').innerHTML;
+    var gen = Math.ceil(12 / oran);          /* en küçük yazı 12 px */
+    hepsi('svg', ic).forEach(function (s) { s.style.width = gen + 'px'; s.style.maxWidth = 'none'; s.style.maxHeight = 'none'; s.style.height = 'auto'; });
+    czSon = b; czKap.hidden = false; d.body.style.overflow = 'hidden'; ic.scrollLeft = 0; ic.scrollTop = 0;
+    czKap.querySelector('.cz-kapat').focus();
+  };
+  hepsi('.r-cizim[data-oran]').forEach(function (f) {
+    var oran = parseFloat(f.getAttribute('data-oran')), ic = f.querySelector('.r-cizim-ic'), cap = f.querySelector('figcaption');
+    if (!oran || !ic || !cap) return;
+    var b = d.createElement('button');
+    b.type = 'button'; b.className = 'cz-buyut'; b.textContent = 'Büyüt';
+    b.setAttribute('aria-label', 'Çizimi büyüt');
+    cap.insertBefore(b, cap.firstChild);
+    var bak = function () {
+      var w = Math.min.apply(null, hepsi('svg', ic).map(function (x) { return x.getBoundingClientRect().width || 9999; }));
+      b.hidden = w * oran >= 10.5;
+    };
+    bak();
+    window.addEventListener('resize', bak, { passive: true });
+    b.addEventListener('click', function () { czAc(f, oran, b); });
+  });
+
   if (!gal) return;
 
   /* galeri: kaydırma, konum noktaları, masaüstü okları */
