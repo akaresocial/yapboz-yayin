@@ -16,7 +16,8 @@
   var $ = function (s, k) { return (k || d).querySelector(s); };
   var $$ = function (s, k) { return [].slice.call((k || d).querySelectorAll(s)); };
 
-  var cizimKap = $('.sb-cizim-kap'), numaralar = $('.sb-numaralar'), antet = $('.sb-antet');
+  var pafta = $('.sb-pafta'), cizimKap = $('.sb-cizim-kap'), numaralar = $('.sb-numaralar'), antet = $('.sb-antet');
+  var yapis = $('.sb-yapis'), adimlar = $('.sb-adimlar'), adim3 = d.getElementById('sb-adim3'), ustBar = $('.ust'), kasa = $('#sb-kasa');
   var kapiBtn = $$('.sb-kapi'), duzenKap = $('.sb-duzenler'), satirKap = $('.sb-satirlar');
   var fisAlt = $('.sb-fis-alt'), fisListe = $('.sb-fis-liste'), fiyatEl = $('.sb-fiyat');
   var gonderler = $$('.sb-gonder'), k1 = $('.sb-k1'), k2 = $('.sb-k2'), canli = $('#sb-canli');
@@ -91,16 +92,25 @@
   }
 
   /* ---------------------------------------------------------------- çizim */
+  /* tek kapının kulbu dolabın ortasına bakar (katalogdaki gibi): soldakilerde sağ kenarda, sağdakilerde sol kenarda */
+  function kulpYon(m) {
+    var top = m.reduce(function (t, kd) { return t + birim(kd); }, 0), x = 0;
+    return m.map(function (kd) { var y = (x + birim(kd) / 2) < top / 2 ? 'sag' : 'sol'; x += birim(kd); return y; });
+  }
+  /* iki kat: kapaklı ve içi görünen; hangisinin görüneceğini .sb-pafta[data-gorunum] seçer */
   function svg(x, yeni) {
-    var g = gen(x), o = '', xx = 0;
+    var g = gen(x), ic = '', dis = '', xx = 0, yon = kulpYon(x.m);
     x.m.forEach(function (kd, i) {
-      o += '<g transform="translate(' + xx + ' 0)"><g' + (yeni && yeni[i] ? ' class="sb-oturan"' : '') + '>' + V.m[kd].ic + '</g></g>';
+      var a = '<g transform="translate(' + xx + ' 0)"><g' + (yeni && yeni[i] ? ' class="sb-oturan"' : '') + '>';
+      ic += a + V.m[kd].ic + '</g></g>';
+      dis += a + (birim(kd) === 1 && yon[i] === 'sol' ? V.m[kd].dis2 : V.m[kd].dis) + '</g></g>';
       xx += birim(kd) * 40;
     });
-    o += '<g transform="translate(0 ' + V.govde + ')">' + V.altlik[g].frag + '</g>';
     return '<svg class="cz sb-cizim" viewBox="-5 -1 ' + (g + 10) + ' 206" style="--vbw:' + (g + 10) + '" aria-hidden="true" focusable="false">' +
       '<g class="renk-beyaz"><rect x="-4" y="200" width="' + (g + 8) + '" height="3.2" class="cz-zemin"/>' +
-      '<line x1="-4" y1="200" x2="' + (g + 4) + '" y2="200" class="cz-zemin-cizgi"/>' + o + '</g></svg>';
+      '<line x1="-4" y1="200" x2="' + (g + 4) + '" y2="200" class="cz-zemin-cizgi"/>' +
+      '<g class="sb-kat sb-kat-dis">' + dis + '</g><g class="sb-kat sb-kat-ic">' + ic + '</g>' +
+      '<g transform="translate(0 ' + V.govde + ')">' + V.altlik[g].frag + '</g></g></svg>';
   }
   function numaraHTML(x) {
     var w = gen(x) + 10, xx = 0;
@@ -193,10 +203,34 @@
     }
   }
 
+  /* ---------------------------------------------------------------- kapaklı / iç görünüm
+     1–2. adımda (kapı sayısı, düzen) kapaklar kapalı; 3. adımın başlığı görünen alanın üst kısmına gelince ya da bir
+     iç seçeneğine dokununca kapaklar kaybolur, içi görünür. Yukarı dönünce yeniden kapanır. */
+  var gorunum = 'kapali', aktifAdim = 0, bakSaat = 0;
+  function gorunumSec(g) {
+    if (g === gorunum) return;
+    gorunum = g;
+    pafta.setAttribute('data-gorunum', g);
+  }
+  function adimBak() {
+    if (!adim3 || !yapis || !adimlar) return;
+    var yr = yapis.getBoundingClientRect(), ar = adimlar.getBoundingClientRect();
+    /* masaüstünde çizim yanda: üst sınır sitenin üst barı; telefonda çizim üstte yapışık: üst sınır çizimin altı */
+    var ust = Math.max(0, yr.right <= ar.left + 1 ? (ustBar ? ustBar.getBoundingClientRect().bottom : 0) : yr.bottom);
+    var alt = innerHeight;
+    if (kasa && getComputedStyle(kasa).position === 'fixed') alt = Math.min(alt, kasa.getBoundingClientRect().top);
+    var a = adim3.getBoundingClientRect().top < ust + (alt - ust) * 0.45 ? 3 : 1;
+    if (a !== aktifAdim) { aktifAdim = a; gorunumSec(a === 3 ? 'ic' : 'kapali'); }
+  }
+  var bakIste = function () { if (!bakSaat) bakSaat = requestAnimationFrame(function () { bakSaat = 0; adimBak(); }); };
+  window.addEventListener('scroll', bakIste, { passive: true });
+  window.addEventListener('resize', bakIste);
+
   /* ---------------------------------------------------------------- olaylar */
   kapiBtn.forEach(function (b) {
     b.addEventListener('click', function () {
       var k = +b.getAttribute('data-k');
+      gorunumSec('kapali'); aktifAdim = 1;
       if (k === durum.k) return;
       sec(yeniDuzen(k, 0, durum.m), k + ' kapılı. Bölmeler: ' + V.duzenler[k][0].ad + '.');
     });
@@ -204,6 +238,7 @@
   duzenKap.addEventListener('click', function (e) {
     var b = e.target.closest('.sb-duzen');
     if (!b) return;
+    gorunumSec('kapali'); aktifAdim = 1;
     var dz = +b.getAttribute('data-d');
     if (dz === durum.dz) return;
     sec(yeniDuzen(durum.k, dz, durum.m), 'Bölmeler: ' + V.duzenler[durum.k][dz].ad + '.');
@@ -211,6 +246,7 @@
   satirKap.addEventListener('click', function (e) {
     var b = e.target.closest('.sb-sec'), s = b && b.closest('.sb-satir');
     if (!s) return;
+    gorunumSec('ic'); aktifAdim = 3;
     var i = +s.getAttribute('data-i'), kd = b.getAttribute('data-kod');
     if (durum.m[i] === kd) return;
     var y = { k: durum.k, dz: durum.dz, m: durum.m.slice() };
@@ -252,5 +288,6 @@
   var gelen = adrestenOku();
   if (gelen) { durum = gelen; degisti = true; ciz(null, true); }
   else ciz(null, false);
+  adimBak();
   kok.classList.add('sb-hazir');
 })();

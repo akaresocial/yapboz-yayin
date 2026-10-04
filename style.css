@@ -961,11 +961,18 @@ html:not(.js) .sb-js{display:none!important}
 .sb-yapis{position:sticky;top:0;z-index:20;margin:0 calc(-1 * var(--gutter));padding:6px var(--gutter) 8px;background:var(--kagit);
   box-shadow:0 8px 10px -9px rgba(26,25,22,.4)}
 @media(min-width:760px) and (max-width:959px){.sb-yapis{top:66px}}
-.sb-pafta{border:1.5px solid var(--murekkep);padding:6px 6px 2px;display:flex;justify-content:center;background-color:var(--kagit);
+.sb-pafta{position:relative;border:1.5px solid var(--murekkep);padding:6px 6px 2px;display:flex;justify-content:center;background-color:var(--kagit);
   background-image:linear-gradient(var(--izgara) 1px,transparent 1px),linear-gradient(90deg,var(--izgara) 1px,transparent 1px);background-size:20px 20px}
 .sb-cizim-kap{position:relative;flex:none;width:min(100%,calc(var(--vbw) * var(--olcek) * 1px))}
 .sb-cizim{display:block;width:100%;height:auto}
-.sb-numaralar{position:absolute;inset:0}
+.sb-numaralar{position:absolute;inset:0;transition:opacity .25s}
+/* kapaklı / iç görünüm: 1–2. adımda kapaklar, 3. adımda iç (sumbul.js data-gorunum'u değiştirir) */
+.sb-kat{transition:opacity .35s ease}
+.sb-pafta[data-gorunum="kapali"] .sb-kat-ic,.sb-pafta[data-gorunum="ic"] .sb-kat-dis{opacity:0}
+.sb-pafta[data-gorunum="kapali"] .sb-numaralar{opacity:0;pointer-events:none}
+.sb-pafta[data-gorunum="kapali"] .sb-no{visibility:hidden}
+.sb-ic-etiket{top:8px;left:8px;transition:opacity .25s}
+.sb-pafta[data-gorunum="kapali"] .sb-ic-etiket{opacity:0}
 .sb-no{position:absolute;top:9%;width:24px;height:24px;margin-left:-12px;display:grid;place-items:center;border-radius:50%;background:var(--beyaz);
   border:1.5px solid var(--murekkep);color:var(--murekkep);font-size:13px;font-weight:800;line-height:1;text-decoration:none;
   font-variation-settings:var(--dar);box-shadow:0 1px 3px rgba(26,25,22,.2)}
