@@ -30,21 +30,10 @@
   var gen = function (x) { return x.k * 40; };
   var kod = function (x) { return 'S' + gen(x) + '-' + x.m.join('-'); };
   var tl = function (n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' TL'; };
-  var ayni = function (a, b) { return a.join('-') === b.join('-'); };
   var tipi = function (m) { return m.map(function (kd) { return birim(kd) === 2 ? 'C' : 'T'; }).join(''); };
 
-  function fiyat(x) {
-    var h = V.hazir[gen(x)];
-    if (h && ayni(x.m, h.m) && h.fiyat != null) return h.fiyat;
-    var t = V.altlik[gen(x)].fiyat;
-    if (t == null) return null;
-    for (var i = 0; i < x.m.length; i++) {
-      var f = V.m[x.m[i]].fiyat;
-      if (f == null) return null;
-      t += f;
-    }
-    return t;
-  }
+  /* fiyat yalnız kapı sayısına bağlı; bölme düzeni ve içi fiyatı değiştirmez */
+  function fiyat(x) { var f = V.fiyat[x.k]; return f == null ? null : f; }
 
   /* düzen değişince bölmelerin içi aynı türdeki bölmelerden sırayla taşınır (seçimler kaybolmasın), yoksa varsayılan */
   function yeniDuzen(k, dz, onceki) {
@@ -81,7 +70,7 @@
   function mesaj(x) {
     var f = fiyat(x), s = ['Merhaba, YapBoz sitesinden yazıyorum.', 'Sümbül Dolap ' + x.k + ' Kapılı istiyorum:'];
     x.m.forEach(function (kd, i) { s.push((i + 1) + '. bölme: ' + V.m[kd].ad + ' (' + V.m[kd].kisa + ')'); });
-    if (f != null) s.push('Toplam: ' + tl(f));
+    if (f != null) s.push('Fiyat: ' + tl(f));
     s.push(f != null ? 'Sipariş vermek istiyorum.' : 'Fiyatını öğrenmek istiyorum.');
     return s.join('\n');
   }
@@ -173,10 +162,9 @@
     fisListe.innerHTML = x.m.map(function (kd, i) {
       return '<li><span>' + (i + 1) + '. bölme · ' + tur(kd) + '</span><b>' + V.m[kd].kisa + '</b></li>';
     }).join('');
-    var notlar = [V.not_, V.tarih ? V.tarih + ' fiyatı' : ''].filter(Boolean).join(' · ');
-    fiyatEl.innerHTML = f != null ? '<p class="sb-toplam"><span>Toplam</span><b>' + tl(f) + '</b></p>' + (notlar ? '<p class="sb-fiyat-not">' + notlar + '</p>' : '')
+    fiyatEl.innerHTML = f != null ? '<p class="sb-toplam"><span>Fiyat</span><b>' + tl(f) + '</b></p>' + (V.not_ ? '<p class="sb-fiyat-not">' + V.not_ + '</p>' : '')
       : '';
-    k1.textContent = f != null ? x.k + ' Kapılı · Toplam' : 'Sümbül Dolap';
+    k1.textContent = f != null ? 'Sümbül ' + x.k + ' Kapılı' : 'Sümbül Dolap';
     k2.textContent = f != null ? tl(f) : x.k + ' Kapılı';
     var u = WA + encodeURIComponent(mesaj(x));
     gonderler.forEach(function (a) {
@@ -194,13 +182,13 @@
     ciz(onceki, yapi);
     if (duyuru) {
       var f = fiyat(durum);
-      canli.textContent = duyuru + (f != null ? ' Toplam ' + tl(f).replace(' TL', ' lira') + '.' : '');
+      canli.textContent = duyuru + (f != null ? ' Fiyat ' + tl(f).replace(' TL', ' lira') + '.' : '');
     }
   }
 
   /* ---------------------------------------------------------------- kapaklı / iç görünüm
      1–2. adımda (kapı sayısı, düzen) kapaklar kapalı; 3. adımın başlığı görünen alanın üst kısmına gelince ya da bir
-     iç seçeneğine dokununca kapaklar kaybolur, içi görünür. Yukarı dönünce yeniden kapanır. */
+     iç seçeneğine dokununca kapaklar kaybolur, içi görünür (bölme numaralarıyla). Yukarı dönünce yeniden kapanır. */
   var gorunum = 'kapali', aktifAdim = 0, bakSaat = 0;
   function gorunumSec(g) {
     if (g === gorunum) return;

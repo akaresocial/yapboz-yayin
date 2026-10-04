@@ -971,8 +971,6 @@ html:not(.js) .sb-js{display:none!important}
 .sb-pafta[data-gorunum="kapali"] .sb-kat-ic,.sb-pafta[data-gorunum="ic"] .sb-kat-dis{opacity:0}
 .sb-pafta[data-gorunum="kapali"] .sb-numaralar{opacity:0;pointer-events:none}
 .sb-pafta[data-gorunum="kapali"] .sb-no{visibility:hidden}
-.sb-ic-etiket{top:8px;left:8px;transition:opacity .25s}
-.sb-pafta[data-gorunum="kapali"] .sb-ic-etiket{opacity:0}
 .sb-no{position:absolute;top:9%;width:24px;height:24px;margin-left:-12px;display:grid;place-items:center;border-radius:50%;background:var(--beyaz);
   border:1.5px solid var(--murekkep);color:var(--murekkep);font-size:13px;font-weight:800;line-height:1;text-decoration:none;
   font-variation-settings:var(--dar);box-shadow:0 1px 3px rgba(26,25,22,.2)}
@@ -990,11 +988,13 @@ html:not(.js) .sb-js{display:none!important}
 .sb-adim-bas span{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:var(--turuncu);color:var(--murekkep);
   font-size:15px;font-weight:800;font-variation-settings:var(--dar)}
 .sb-kapilar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.sb-kapi{min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;
+.sb-kapi{min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;
   border:1.5px solid var(--murekkep);border-radius:var(--r);background:var(--fis);color:var(--murekkep);font:inherit;line-height:1;cursor:pointer;
   touch-action:manipulation}
 .sb-kapi b{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
 .sb-kapi span{font-size:13px;font-weight:700}
+.sb-kapi small{margin-top:3px;font-size:12.5px;font-weight:700;color:var(--murekkep-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.sb-kapi[aria-pressed="true"] small{color:#E6E0D5}
 .sb-kapi:active{transform:translateY(1px)}
 .sb-kapi[aria-pressed="true"]{background:var(--murekkep);color:#fff}
 .sb-duzenler{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
