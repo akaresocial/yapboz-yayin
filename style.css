@@ -229,6 +229,10 @@ html:not(.js) .katalog-olcek{margin-top:44px}
 @media(min-width:620px){.kart h3{font-size:1.1rem}.kart-olcu{font-size:1.05rem}}
 @media(min-width:1000px){.kart-alt{display:flex}}
 
+/* Sümbül kartı: tek renk (renk noktası yok), katalog fotoğrafı, fiyat */
+.kart-fiyat{margin:4px 0 0;font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+@media(min-width:620px){.kart-fiyat{font-size:1.1rem}}
+
 /* sekizinci hücre: boş yuva */
 .kart-yuva{display:flex}
 .kart-yuva a{flex:1;display:flex;flex-direction:column;gap:10px;padding:16px 14px 14px;border:2.5px dashed var(--turuncu);
@@ -497,6 +501,14 @@ html:not(.js) .katalog-olcek{margin-top:44px}
   .urun{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);grid-template-areas:"g b" "g y";column-gap:52px;row-gap:22px;align-items:start}
   .urun-bas{grid-area:b}.gallery{grid-area:g;position:sticky;top:86px}.urun-yan{grid-area:y}
 }
+
+/* Sümbül ürün sayfası: fiyat, tek renk */
+.sb-urun-fiyat{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;margin:0 0 12px}
+.sb-urun-fiyat b{font-size:clamp(1.8rem,7.4vw,2.4rem);font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sb-urun-fiyat span{font-size:.95rem;font-weight:700;color:#0E7A3A}
+.sb-urun-renk{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-weight:650}
+.sb-renk-yuz{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid rgba(0,0,0,.2);
+  background:linear-gradient(90deg,#FBFAF7 0 58%,#B98159 58% 100%)}
 
 /* ölçü çizimi: tek pafta + antet; yanında iç düzen ve ölçü kontrolü */
 .cizim-bolum{padding:40px 0 48px;border-top:1.5px solid var(--murekkep);scroll-margin-top:0}
