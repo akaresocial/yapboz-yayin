@@ -1050,7 +1050,10 @@ html:not(.js) .sb-js{display:none!important}
 .sb-toplam{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .sb-toplam span{font-weight:700}
 .sb-toplam b{font-size:1.5rem;font-weight:800;font-variant-numeric:tabular-nums}
-.sb-fiyat-not{margin-top:2px!important;font-size:.85rem;color:var(--murekkep-3);text-align:right}
+/* kurulum notu: kâğıt zeminde AA kontrast (4.8:1) için WhatsApp yeşilinden bir ton koyu */
+.sb-fiyat-not{margin-top:2px!important;font-size:.9rem;font-weight:700;color:#0E7A3A;text-align:right}
+.sb-kurulum{margin:8px 0 0;font-size:.92rem;font-weight:700;color:#0E7A3A}
+.sb-model-k{font-size:.85rem;font-weight:700;color:#0E7A3A}
 .sb-fis .sb-gonder{width:100%;margin-top:14px}
 .sb-teslim{margin:12px 0 0;font-size:.92rem;color:var(--murekkep-2)}
 .sb-teslim a{color:var(--murekkep);font-weight:700}

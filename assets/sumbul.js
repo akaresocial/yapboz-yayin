@@ -162,7 +162,7 @@
     fisListe.innerHTML = x.m.map(function (kd, i) {
       return '<li><span>' + (i + 1) + '. bölme · ' + tur(kd) + '</span><b>' + V.m[kd].kisa + '</b></li>';
     }).join('');
-    fiyatEl.innerHTML = f != null ? '<p class="sb-toplam"><span>Fiyat</span><b>' + tl(f) + '</b></p>' + (V.not_ ? '<p class="sb-fiyat-not">' + V.not_ + '</p>' : '')
+    fiyatEl.innerHTML = f != null ? '<p class="sb-toplam"><span>Fiyat</span><b>' + tl(f) + '</b></p>' + (V.kurulum ? '<p class="sb-fiyat-not">' + V.kurulum + '</p>' : '')
       : '';
     k1.textContent = f != null ? 'Sümbül ' + x.k + ' Kapılı' : 'Sümbül Dolap';
     k2.textContent = f != null ? tl(f) : x.k + ' Kapılı';
