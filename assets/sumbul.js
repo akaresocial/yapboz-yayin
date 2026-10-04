@@ -11,7 +11,6 @@
   try { V = JSON.parse(veriEl.textContent); } catch (e) { return; }
 
   var WA = 'https://wa.me/905526663606?text=';
-  var ADRES = 'https://yapbozmobilya.com.tr/sumbul-dolap.html';
   var azHareket = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var $ = function (s, k) { return (k || d).querySelector(s); };
   var $$ = function (s, k) { return [].slice.call((k || d).querySelectorAll(s)); };
@@ -78,16 +77,12 @@
     try { history.replaceState(history.state, '', location.pathname + ara + '#d=' + kod(durum)); } catch (e) {}
   }
 
+  /* WhatsApp mesajı: yalnız istenen dolap, müşteri bir şey eklemeden gönderir (sayfa-uret.py sb_mesaj ile aynı) */
   function mesaj(x) {
-    var al = V.altlik[gen(x)], f = fiyat(x), s = ['Merhaba, YapBoz sitesinden yazıyorum.', 'Sümbül Dolap seçimim (' + V.renk + '):',
-      x.k + ' Kapılı, ' + gen(x) + ' x ' + V.derinlik + ' x ' + V.yukseklik + ' cm, ' + al.cekmece + ' çekmeceli'];
-    x.m.forEach(function (kd, i) { s.push((i + 1) + '. bölme (' + tur(kd) + '): ' + V.m[kd].kisa + ' (' + V.m[kd].ad + ')'); });
-    if (f != null) {
-      var ek = [V.tarih, V.not_].filter(Boolean).join(', ');
-      s.push('Sitedeki fiyat: ' + tl(f) + (ek ? ' (' + ek + ')' : ''));
-    }
-    s.push('Seçimim: ' + ADRES + '#d=' + kod(x));
-    s.push((f != null ? 'Sipariş vermek istiyorum.' : 'Fiyatını öğrenmek istiyorum.') + ' Teslimat ilçem: ');
+    var f = fiyat(x), s = ['Merhaba, YapBoz sitesinden yazıyorum.', 'Sümbül Dolap ' + x.k + ' Kapılı istiyorum:'];
+    x.m.forEach(function (kd, i) { s.push((i + 1) + '. bölme: ' + V.m[kd].ad + ' (' + V.m[kd].kisa + ')'); });
+    if (f != null) s.push('Toplam: ' + tl(f));
+    s.push(f != null ? 'Sipariş vermek istiyorum.' : 'Fiyatını öğrenmek istiyorum.');
     return s.join('\n');
   }
 
