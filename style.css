@@ -1067,6 +1067,7 @@ html:not(.js) .sb-js{display:none!important}
 .sb-kasa-tel{flex:none;width:46px;height:46px;display:grid;place-items:center;border:1.5px solid var(--murekkep);border-radius:var(--r);
   background:var(--beyaz);color:var(--murekkep)}
 .sb-kasa .btn{flex:none;min-height:46px;padding:8px 14px;font-size:.97rem;white-space:nowrap}
+@media(max-width:350px){.sb-kasa{gap:6px}.sb-kasa .btn{padding:8px 10px;gap:6px;font-size:.92rem}.sb-kasa-tel{width:44px}}
 
 /* sayfanın alt bölümleri */
 .sb-bolum-bas{margin-bottom:16px;padding-top:26px;border-top:1.5px solid var(--murekkep)}
