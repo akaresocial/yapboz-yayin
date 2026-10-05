@@ -1,5 +1,5 @@
 /* YapBoz Mobilya — Sümbül Dolap seçici. Kütüphane yok, yalnız sumbul-dolap.html'de yüklenir.
-   Üç adım: 1) kaç kapılı  2) bölme düzeni (kapı sayısına göre izinli 1–2 düzen)  3) her bölmenin içi (resimden).
+   Üç adım: 1) kaç kapaklı  2) bölme düzeni (kapak sayısına göre izinli 1–2 düzen)  3) her bölmenin içi (resimden).
    Çizim parçaları, seçenek kartları ve fiyatlar sayfadaki #sb-veri'den gelir (_araclar/sumbul.py üretir);
    burada yalnız yan yana dizilir. Seçim adreste #d=S160-T6-C3-T6 olarak durur (WhatsApp mesajındaki bağlantı). */
 (function () {
@@ -21,18 +21,18 @@
   var fisAlt = $('.sb-fis-alt'), fisListe = $('.sb-fis-liste'), fiyatEl = $('.sb-fiyat');
   var gonderler = $$('.sb-gonder'), k1 = $('.sb-k1'), k2 = $('.sb-k2'), canli = $('#sb-canli');
 
-  /* durum: kapı sayısı, düzen sırası, soldan sağa bölmelerin içi */
+  /* durum: kapak sayısı, düzen sırası, soldan sağa bölmelerin içi */
   var durum = { k: V.varsayilan / 40, dz: 0, m: V.duzenler[V.varsayilan / 40][0].ic.slice() };
   var degisti = false;      /* adres temiz kalır; ilk seçimden (ya da seçimli bağlantıyla gelindiyse) sonra #d= yazılır */
 
   var birim = function (kd) { return V.m[kd].birim; };
-  var tur = function (kd) { return birim(kd) === 2 ? 'çift kapı' : 'tek kapı'; };
+  var tur = function (kd) { return birim(kd) === 2 ? 'çift kapak' : 'tek kapak'; };
   var gen = function (x) { return x.k * 40; };
   var kod = function (x) { return 'S' + gen(x) + '-' + x.m.join('-'); };
   var tl = function (n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' TL'; };
   var tipi = function (m) { return m.map(function (kd) { return birim(kd) === 2 ? 'C' : 'T'; }).join(''); };
 
-  /* fiyat yalnız kapı sayısına bağlı; bölme düzeni ve içi fiyatı değiştirmez */
+  /* fiyat yalnız kapak sayısına bağlı; bölme düzeni ve içi fiyatı değiştirmez */
   function fiyat(x) { var f = V.fiyat[x.k]; return f == null ? null : f; }
 
   /* düzen değişince bölmelerin içi aynı türdeki bölmelerden sırayla taşınır (seçimler kaybolmasın), yoksa varsayılan */
@@ -42,7 +42,7 @@
     return { k: k, dz: dz, m: D.ic.map(function (v, i) { var t = D.tip.charAt(i); return havuz[t].length ? havuz[t].shift() : v; }) };
   }
 
-  /* adresten seçim: #d=S200-C3-C3-T6 (ya da ?d=). Kapı sayısına uymayan düzen yerine o kapının ilk düzeni açılır. */
+  /* adresten seçim: #d=S200-C3-C3-T6 (ya da ?d=). Kapak sayısına uymayan düzen yerine o kapak sayısının ilk düzeni açılır. */
   function coz(ham) {
     var s = String(ham || '');
     try { s = decodeURIComponent(s); } catch (e) {}
@@ -68,7 +68,7 @@
 
   /* WhatsApp mesajı: yalnız istenen dolap, müşteri bir şey eklemeden gönderir (sayfa-uret.py sb_mesaj ile aynı) */
   function mesaj(x) {
-    var f = fiyat(x), s = ['Merhaba, YapBoz sitesinden yazıyorum.', 'Sümbül Dolap ' + x.k + ' Kapılı istiyorum:'];
+    var f = fiyat(x), s = ['Merhaba, YapBoz sitesinden yazıyorum.', 'Sümbül Dolap ' + x.k + ' Kapaklı istiyorum:'];
     x.m.forEach(function (kd, i) { s.push((i + 1) + '. bölme: ' + V.m[kd].ad + ' (' + V.m[kd].kisa + ')'); });
     if (f != null) s.push('Fiyat: ' + tl(f));
     s.push(f != null ? 'Sipariş vermek istiyorum.' : 'Fiyatını öğrenmek istiyorum.');
@@ -76,7 +76,7 @@
   }
 
   /* ---------------------------------------------------------------- çizim */
-  /* tek kapının kulbu dolabın ortasına bakar (katalogdaki gibi): soldakilerde sağ kenarda, sağdakilerde sol kenarda */
+  /* tek kapaknın kulbu dolabın ortasına bakar (katalogdaki gibi): soldakilerde sağ kenarda, sağdakilerde sol kenarda */
   function kulpYon(m) {
     var top = m.reduce(function (t, kd) { return t + birim(kd); }, 0), x = 0;
     return m.map(function (kd) { var y = (x + birim(kd) / 2) < top / 2 ? 'sag' : 'sol'; x += birim(kd); return y; });
@@ -135,10 +135,10 @@
     eski.insertAdjacentHTML('afterend', svg(x, yeni));
     eski.parentNode.removeChild(eski);
     numaralar.innerHTML = numaraHTML(x);
-    antet.innerHTML = '<b>' + x.k + ' Kapılı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece';
+    antet.innerHTML = '<b>' + x.k + ' Kapaklı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece';
     kapiBtn.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-k') === x.k)); });
     if (yapi) {
-      /* kapı sayısı ya da düzen değişti: düzen kartları ve bölme satırları yeniden kurulur */
+      /* kapak sayısı ya da düzen değişti: düzen kartları ve bölme satırları yeniden kurulur */
       duzenKap.innerHTML = V.duzenler[x.k].map(function (D, j) {
         return '<button type="button" class="sb-duzen" data-d="' + j + '" aria-pressed="' + (j === x.dz) + '">' + siluet(D.tip) + '<span>' + D.ad + '</span></button>';
       }).join('');
@@ -158,14 +158,14 @@
       seciliyiGoster(s);
     });
     /* seçiminiz + kasa */
-    fisAlt.innerHTML = '<b>Sümbül Dolap · ' + x.k + ' Kapılı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece · ' + V.renk;
+    fisAlt.innerHTML = '<b>Sümbül Dolap · ' + x.k + ' Kapaklı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece · ' + V.renk;
     fisListe.innerHTML = x.m.map(function (kd, i) {
       return '<li><span>' + (i + 1) + '. bölme · ' + tur(kd) + '</span><b>' + V.m[kd].kisa + '</b></li>';
     }).join('');
     fiyatEl.innerHTML = f != null ? '<p class="sb-toplam"><span>Fiyat</span><b>' + tl(f) + '</b></p>' + (V.kurulum ? '<p class="sb-fiyat-not">' + V.kurulum + '</p>' : '')
       : '';
-    k1.textContent = f != null ? 'Sümbül ' + x.k + ' Kapılı' : 'Sümbül Dolap';
-    k2.textContent = f != null ? tl(f) : x.k + ' Kapılı';
+    k1.textContent = f != null ? 'Sümbül ' + x.k + ' Kapaklı' : 'Sümbül Dolap';
+    k2.textContent = f != null ? tl(f) : x.k + ' Kapaklı';
     var u = WA + encodeURIComponent(mesaj(x));
     gonderler.forEach(function (a) {
       a.href = u;
@@ -187,7 +187,7 @@
   }
 
   /* ---------------------------------------------------------------- kapaklı / iç görünüm
-     1–2. adımda (kapı sayısı, düzen) kapaklar kapalı; 3. adımın başlığı görünen alanın üst kısmına gelince ya da bir
+     1–2. adımda (kapak sayısı, düzen) kapaklar kapalı; 3. adımın başlığı görünen alanın üst kısmına gelince ya da bir
      iç seçeneğine dokununca kapaklar kaybolur, içi görünür (bölme numaralarıyla). Yukarı dönünce yeniden kapanır. */
   var gorunum = 'kapali', aktifAdim = 0, bakSaat = 0;
   function gorunumSec(g) {
@@ -215,7 +215,7 @@
       var k = +b.getAttribute('data-k');
       gorunumSec('kapali'); aktifAdim = 1;
       if (k === durum.k) return;
-      sec(yeniDuzen(k, 0, durum.m), k + ' kapılı. Bölmeler: ' + V.duzenler[k][0].ad + '.');
+      sec(yeniDuzen(k, 0, durum.m), k + ' kapaklı. Bölmeler: ' + V.duzenler[k][0].ad + '.');
     });
   });
   duzenKap.addEventListener('click', function (e) {
@@ -254,7 +254,7 @@
       e.preventDefault();
       var c = coz(a.getAttribute('data-kod'));
       if (!c) return;
-      sec(c, c.k + ' kapılı, katalogdaki model seçildi.');
+      sec(c, c.k + ' kapaklı, katalogdaki model seçildi.');
       kok.scrollIntoView({ behavior: azHareket ? 'auto' : 'smooth', block: 'start' });
     });
   });
