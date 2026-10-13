@@ -973,11 +973,20 @@ html:not(.js) .sb-js{display:none!important}
 .sb-yapis{position:sticky;top:0;z-index:20;margin:0 calc(-1 * var(--gutter));padding:6px var(--gutter) 8px;background:var(--kagit);
   box-shadow:0 8px 10px -9px rgba(26,25,22,.4)}
 @media(min-width:760px) and (max-width:959px){.sb-yapis{top:66px}}
-.sb-pafta{position:relative;border:1.5px solid var(--murekkep);padding:6px 6px 2px;display:flex;justify-content:center;background-color:var(--kagit);
+.sb-pafta{position:relative;overflow:hidden;border:1.5px solid var(--murekkep);padding:6px 6px 2px;display:flex;justify-content:center;background-color:var(--kagit);
   background-image:linear-gradient(var(--izgara) 1px,transparent 1px),linear-gradient(90deg,var(--izgara) 1px,transparent 1px);background-size:20px 20px}
 .sb-cizim-kap{position:relative;flex:none;width:min(100%,calc(var(--vbw) * var(--olcek) * 1px))}
 .sb-cizim{display:block;width:100%;height:auto}
 .sb-numaralar{position:absolute;inset:0;transition:opacity .25s}
+/* fotoğraf: seçim katalogdaki modelle aynıyken çizimin üstünde durur (sumbul.js data-goster'i değiştirir). İçindeki
+   dolap çizimdeki dolaba oturur (yeri sumbul.py foto_yeri); kutudan taşan kısmını pafta keser. 3. adımda kapakları açık
+   fotoğraf, yüklenince (sumbul.js .yuklu) kapalının üstünde belirir. */
+.sb-foto{position:absolute;pointer-events:none;transition:opacity .35s ease}
+.sb-foto picture,.sb-foto img{display:block}
+.sb-foto img{width:100%;height:auto}
+.sb-foto-ic{position:absolute;inset:0;opacity:0;transition:opacity .35s ease}
+.sb-pafta[data-goster="cizim"] .sb-foto{opacity:0}
+.sb-pafta[data-gorunum="ic"] .sb-foto-ic.yuklu{opacity:1}
 /* kapaklı / iç görünüm: 1–2. adımda kapaklar, 3. adımda iç (sumbul.js data-gorunum'u değiştirir) */
 .sb-kat{transition:opacity .35s ease}
 .sb-pafta[data-gorunum="kapali"] .sb-kat-ic,.sb-pafta[data-gorunum="ic"] .sb-kat-dis{opacity:0}

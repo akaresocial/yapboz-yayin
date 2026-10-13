@@ -1,7 +1,8 @@
 /* YapBoz Mobilya — Sümbül Dolap seçici. Kütüphane yok, yalnız sumbul-dolap.html'de yüklenir.
    Üç adım: 1) kaç kapaklı  2) bölme düzeni (kapak sayısına göre izinli 1–2 düzen)  3) her bölmenin içi (resimden).
    Çizim parçaları, seçenek kartları ve fiyatlar sayfadaki #sb-veri'den gelir (_araclar/sumbul.py üretir);
-   burada yalnız yan yana dizilir. Seçim adreste #d=S160-T6-C3-T6 olarak durur (WhatsApp mesajındaki bağlantı). */
+   burada yalnız yan yana dizilir. Seçim adreste #d=S160-T6-C3-T6 olarak durur (WhatsApp mesajındaki bağlantı).
+   Seçim katalogdaki modelle aynıyken çizimin yerinde o modelin fotoğrafı durur (aşağıda "fotoğraf"). */
 (function () {
   'use strict';
   var d = document;
@@ -126,6 +127,48 @@
     if (sol < kap.scrollLeft + pay || sag > kap.scrollLeft + kap.clientWidth - 30) kap.scrollLeft = Math.max(0, sol - pay);
   }
 
+  /* ---------------------------------------------------------------- fotoğraf
+     Seçim katalogdaki modelle birebir aynıyken (açılışta, kapak sayısı seçilince, "Bunu seçin"de) çizimin yerinde o
+     modelin fotoğrafı durur: 1–2. adımda kapalı, 3. adımda kapakları açık. Bölme düzeni ya da bir bölmenin içi değişince
+     çizim görünür; seçim katalogdaki hâline dönünce fotoğraf geri gelir (sahibinin isteği, 2026-10-13). Katmanlar
+     sayfadan gelir (sumbul.py foto_yeri: fotoğraftaki dolap çizimdekinin üstüne oturur); kurulan katman saklanır. */
+  var foto = $('.sb-foto', cizimKap), ilkFoto = foto, fotolar = {}, icIste = false;
+  if (foto) fotolar[foto.getAttribute('data-g')] = foto;
+  function katalogda(x) { var h = V.hazir[gen(x)]; return !!(h && h.katman) && h.m.join('-') === x.m.join('-'); }
+  /* kapakları açık fotoğraf ilk kaydırmada ya da 3. adımda iner (sayfanın açılışını ağırlaştırmasın) */
+  function icYukle() {
+    var ic = foto && $('.sb-foto-ic', foto), img = ic && $('img', ic);
+    if (!img || !img.hasAttribute('data-src')) return;
+    $$('[data-srcset]', ic).forEach(function (s) { s.setAttribute('srcset', s.getAttribute('data-srcset')); s.removeAttribute('data-srcset'); });
+    img.setAttribute('src', img.getAttribute('data-src'));
+    img.removeAttribute('data-src');
+    var bitti = function () { if (img.naturalWidth) ic.classList.add('yuklu'); };
+    img.addEventListener('load', bitti);
+    if (img.complete) bitti();
+  }
+  function icIstendi() { if (!icIste) { icIste = true; icYukle(); } }
+  function fotoGuncelle() {
+    var g = gen(durum);
+    if (!katalogda(durum)) { pafta.setAttribute('data-goster', 'cizim'); return; }
+    var k = fotolar[g];
+    if (!k) { var t = d.createElement('div'); t.innerHTML = V.hazir[g].katman; k = fotolar[g] = t.firstChild; }
+    if (k !== foto) {
+      if (foto && foto.parentNode) foto.parentNode.removeChild(foto);
+      cizimKap.insertBefore(k, numaralar);
+      foto = k;
+    }
+    /* sonradan kurulan katmanın fotoğrafı henüz inmediyse inene kadar çizim görünür, inince fotoğraf belirir
+       (sayfayla gelen ilk fotoğraf hemen gösterilir; inerken altındaki çizim görünür) */
+    var img = $('.sb-foto-dis img', k);
+    if (k === ilkFoto || (img.complete && img.naturalWidth)) pafta.setAttribute('data-goster', 'foto');
+    else {
+      pafta.setAttribute('data-goster', 'cizim');
+      img.addEventListener('load', function () { if (foto === k && katalogda(durum)) pafta.setAttribute('data-goster', 'foto'); }, { once: true });
+    }
+    if (icIste) icYukle();
+  }
+  window.addEventListener('scroll', icIstendi, { passive: true, once: true });
+
   /* ---------------------------------------------------------------- ekrana yansıtma */
   function ciz(onceki, yapi) {
     var x = durum, g = gen(x), al = V.altlik[g], f = fiyat(x);
@@ -134,6 +177,7 @@
     var eski = $('svg.sb-cizim', cizimKap);
     eski.insertAdjacentHTML('afterend', svg(x, yeni));
     eski.parentNode.removeChild(eski);
+    fotoGuncelle();
     numaralar.innerHTML = numaraHTML(x);
     antet.innerHTML = '<b>' + x.k + ' Kapaklı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece';
     kapiBtn.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-k') === x.k)); });
@@ -191,6 +235,7 @@
      iç seçeneğine dokununca kapaklar kaybolur, içi görünür (bölme numaralarıyla). Yukarı dönünce yeniden kapanır. */
   var gorunum = 'kapali', aktifAdim = 0, bakSaat = 0;
   function gorunumSec(g) {
+    if (g === 'ic') icIstendi();
     if (g === gorunum) return;
     gorunum = g;
     pafta.setAttribute('data-gorunum', g);
