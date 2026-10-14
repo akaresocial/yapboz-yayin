@@ -180,6 +180,8 @@
     fotoGuncelle();
     numaralar.innerHTML = numaraHTML(x);
     antet.innerHTML = '<b>' + x.k + ' Kapaklı</b> · ' + g + ' × 50 × 200 cm · ' + al.cekmece + ' çekmece';
+    katOlc();                       /* antet satırı değişmiş olabilir; kutunun boyu yeniden ölçülür */
+    katGuncelle();
     kapiBtn.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-k') === x.k)); });
     if (yapi) {
       /* kapak sayısı ya da düzen değişti: düzen kartları ve bölme satırları yeniden kurulur */
@@ -253,6 +255,34 @@
   var bakIste = function () { if (!bakSaat) bakSaat = requestAnimationFrame(function () { bakSaat = 0; adimBak(); }); };
   window.addEventListener('scroll', bakIste, { passive: true });
   window.addEventListener('resize', bakIste);
+
+  /* ---------------------------------------------------------------- telefonda kutu: açılışta büyük, kaydırınca küçülür
+     (style.css, 759 px'e kadar; sahibinin seçimi 2026-10-14). Kutunun sayfadaki yüksekliği açılıştaki büyük hâline
+     sabitlenir, top'u eksidir: kaydırınca üst kısmı ekranın üstüne kayar, pafta da tam o kadar küçülür; bugünkü boyuna
+     (KUCUK) inince kutu yapışık kalır. Büyük hâlin boyu CSS'ten ölçülür (--buyuk, ekran yüksekliğine göre). Çizimin
+     ölçeği paftanın yüksekliğinden ve genişliğinden hesaplanır; fotoğraf aynı kutuda olduğu için çizimle birlikte küçülür. */
+  var KUCUK = 0.78, IC = 11, katlanir = false, katB = 0, katD = 0, katSaat = 0;   /* IC: paftanın dikey iç boşluğu + kenarlığı */
+  function katOlc() {
+    yapis.style.removeProperty('height');
+    ['--katla', '--pafta-h', '--olcek-px'].forEach(function (p) { yapis.style.removeProperty(p); });
+    katlanir = innerWidth < 760;
+    if (!katlanir) return;
+    katB = pafta.getBoundingClientRect().height;
+    katD = Math.max(0, katB - Math.round(206 * KUCUK + IC));
+    yapis.style.height = yapis.getBoundingClientRect().height + 'px';
+    yapis.style.setProperty('--katla', katD + 'px');
+  }
+  function katGuncelle() {
+    katSaat = 0;
+    if (!katlanir) return;
+    var p = katD ? Math.min(1, Math.max(0, -yapis.getBoundingClientRect().top / katD)) : 0;
+    var h = katB - p * katD;
+    var o = Math.min((h - IC) / 206, (pafta.clientWidth - 12) / (gen(durum) + 10));
+    yapis.style.setProperty('--pafta-h', h.toFixed(1) + 'px');
+    yapis.style.setProperty('--olcek-px', o.toFixed(4) + 'px');
+  }
+  window.addEventListener('scroll', function () { if (!katSaat) katSaat = requestAnimationFrame(katGuncelle); }, { passive: true });
+  window.addEventListener('resize', function () { katOlc(); katGuncelle(); });
 
   /* ---------------------------------------------------------------- olaylar */
   kapiBtn.forEach(function (b) {

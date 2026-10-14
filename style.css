@@ -967,7 +967,10 @@ html:not(.js) .sb-js{display:none!important}
 .js .sb-jsyok{display:none}
 .sb{padding:8px 0 30px}
 .sb-bas h1{margin:0 0 6px;font-size:clamp(1.9rem,8.4vw,3rem);font-weight:800;line-height:1;font-variation-settings:"wdth" 106}
-.sb-giris{margin:0 0 12px;color:var(--murekkep-2);font-size:.98rem;line-height:1.45;max-width:46ch}
+/* slogan (sahibinin seçimi, 2026-10-14): tek satır, vurgulu kısım ana sayfadaki gibi kesikli turuncu "eksik parça" çerçevesi */
+.sb-slogan{margin:4px 0 14px;color:var(--murekkep);font-size:clamp(1.3rem,5.7vw,1.75rem);font-weight:760;line-height:1.2;
+  letter-spacing:-.022em;text-wrap:balance}
+.sb-slogan em{font-style:normal;display:inline-block;padding:0 .16em .05em;border:2.5px dashed var(--turuncu);border-radius:6px;line-height:1.08}
 
 /* yapışık çizim */
 .sb-yapis{position:sticky;top:0;z-index:20;margin:0 calc(-1 * var(--gutter));padding:6px var(--gutter) 8px;background:var(--kagit);
@@ -976,6 +979,17 @@ html:not(.js) .sb-js{display:none!important}
 .sb-pafta{position:relative;overflow:hidden;border:1.5px solid var(--murekkep);padding:6px 6px 2px;display:flex;justify-content:center;background-color:var(--kagit);
   background-image:linear-gradient(var(--izgara) 1px,transparent 1px),linear-gradient(90deg,var(--izgara) 1px,transparent 1px);background-size:20px 20px}
 .sb-cizim-kap{position:relative;flex:none;width:min(100%,calc(var(--vbw) * var(--olcek) * 1px))}
+/* telefonda (759 px'e kadar) kutu açılışta büyük, kaydırınca küçülür (sahibinin seçimi, 2026-10-14). Kutunun sayfadaki
+   yüksekliği hep büyük hâli kadar, aşağıdaki içerik oynamaz; top eksi olduğu için kaydırınca üst kısmı ekranın üstüne kayar,
+   sumbul.js paftayı (--pafta-h) ve çizim ölçeğini (--olcek-px) tam o kadar küçültür, bugünkü boyuna inince kutu yapışık kalır.
+   --buyuk: açılıştaki ölçek (px/cm), ekran yüksekliğine göre .78 ile 1.6 arası. Fotoğraf çizimle aynı kutuda, birlikte küçülür. */
+@media(max-width:759px){
+  .sayfa-sumbul{--buyuk:clamp(.78px,calc((100vh - 411px) / 206),1.6px)}
+  @supports(height:100svh){.sayfa-sumbul{--buyuk:clamp(.78px,calc((100svh - 411px) / 206),1.6px)}}
+  .sb-yapis{top:calc(-1 * var(--katla,0px));display:flex;flex-direction:column;justify-content:flex-end}
+  .sb-pafta{flex:none;height:var(--pafta-h,calc(206 * var(--buyuk) + 11px));align-items:flex-end}
+  .sb-cizim-kap{width:min(100%,calc(var(--vbw) * var(--olcek-px,var(--buyuk))))}
+}
 .sb-cizim{display:block;width:100%;height:auto}
 .sb-numaralar{position:absolute;inset:0;transition:opacity .25s}
 /* fotoğraf: seçim katalogdaki modelle aynıyken çizimin üstünde durur (sumbul.js data-goster'i değiştirir). İçindeki
@@ -1135,7 +1149,7 @@ html:not(.js) .sb-js{display:none!important}
 
 /* tablet ve masaüstü */
 @media(min-width:600px){.sayfa-sumbul{--olcek:1.1}.sb-izgara{max-width:640px;margin:0 auto}}
-@media(min-width:600px) and (max-width:959px){:root:has(.sayfa-sumbul){scroll-padding-top:330px}}
+@media(min-width:760px) and (max-width:959px){:root:has(.sayfa-sumbul){scroll-padding-top:330px}}
 @media(min-width:960px){
   .sayfa-sumbul{--olcek:1.7}
   .sb-izgara{max-width:var(--maxw);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);grid-template-rows:auto 1fr;
